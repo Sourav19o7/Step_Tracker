@@ -161,6 +161,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
+        Toast.makeText(this,"Connection Failed", Toast.LENGTH_LONG).show()
         if (!authInProgress) {
             try {
                 authInProgress = true

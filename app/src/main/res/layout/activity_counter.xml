@@ -1,58 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    >
-    <data>
-        <variable
-            name="step_model"
-            type="com.level.g_fit.Counter" />
-    </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/step_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".Counter">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Counter">
 
-        <TextView
-            android:id="@+id/steps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="290dp"
-            android:text="Steps"
-            android:textSize="40sp"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="290dp"
+        android:layout_marginEnd="8dp"
+        android:text="Steps"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_stepsTaken"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="30dp"
-            android:text="0"
-            android:textSize="37sp"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/steps" />
+    <TextView
+        android:id="@+id/tv_stepsTaken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="8dp"
+        android:text="0"
+        android:textSize="37sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/steps" />
 
-        <ImageView
-            android:id="@+id/circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="264dp"
-            android:background="@drawable/circle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/circle"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="264dp"
+        android:background="@drawable/circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
