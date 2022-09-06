@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.level.g_fit
 
 import android.content.Intent
@@ -142,9 +144,9 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     override fun onConnected(p0: Bundle?) {
-        //recordingData()
         //Fitness.RecordingApi.subscribe(mApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-        val rec : Recording_Subscribe = Recording_Subscribe()
+        //recordingData()
+        val rec: Recording_Subscribe = Recording_Subscribe()
         rec.start(mApiClient)
         Log.i("Connection", "onConnected")
         val dataSourceRequest = DataSourcesRequest.Builder()
@@ -180,7 +182,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     private fun recordingData() {
         Fitness.RecordingApi
             .subscribe(mApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-        Fitness.RecordingApi.subscribe(mApiClient,DataType.AGGREGATE_STEP_COUNT_DELTA)
+        Fitness.RecordingApi.subscribe(mApiClient, DataType.AGGREGATE_STEP_COUNT_DELTA)
     }
 
     override fun onConnectionSuspended(p0: Int) {
