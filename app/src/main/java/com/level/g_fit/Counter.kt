@@ -143,6 +143,9 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
 
     override fun onConnected(p0: Bundle?) {
         recordingData()
+        //Fitness.RecordingApi.subscribe(mApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
+        val rec : Recording_Subscribe = Recording_Subscribe()
+        rec.start(mApiClient)
         Log.i("Connection", "onConnected")
         val dataSourceRequest = DataSourcesRequest.Builder()
             .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)

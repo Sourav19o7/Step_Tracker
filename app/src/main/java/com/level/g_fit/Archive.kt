@@ -119,7 +119,6 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     fun retrievingData() {
-
         val readReq: DataReadRequest = DataReadRequest.Builder()
             .aggregate(
                 DataType.TYPE_STEP_COUNT_DELTA,
@@ -144,7 +143,6 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
                 }
             }
         )
-
     }
 
     private fun processData(dataSet: DataSet) {
