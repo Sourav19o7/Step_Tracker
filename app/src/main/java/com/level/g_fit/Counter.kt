@@ -7,15 +7,21 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.*
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.PendingResult
+import com.google.android.gms.common.api.ResultCallback
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.*
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.request.SensorRequest
 import com.google.android.gms.fitness.result.DataSourcesResult
 import java.util.concurrent.TimeUnit
+
 
 @Suppress("DEPRECATION")
 class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.ConnectionCallbacks,
@@ -25,6 +31,9 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     val AUTH_PENDING: String = ""
     var authInProgress: Boolean = false
     lateinit var mApiClient: GoogleApiClient
+    var fitnessOptions = FitnessOptions.builder()
+        .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
+        .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +46,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         mApiClient = GoogleApiClient.Builder(this)
             .addApi(Fitness.SENSORS_API)
             .addApi(Fitness.RECORDING_API)
+            .addApi(Fitness.HISTORY_API)
             .addScope(Fitness.SCOPE_ACTIVITY_READ_WRITE)
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
@@ -79,15 +89,28 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         for (field: Field in p0.dataType.fields) {
             val value: Value = p0.getValue(field)
             runOnUiThread {
+                Fitness.getHistoryClient(
+                    this,
+                    GoogleSignIn.getAccountForExtension(this, fitnessOptions)
+                )
+                    .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+                    .addOnSuccessListener { result ->
+                        val totalSteps =
+                            result.dataPoints.firstOrNull()?.getValue(Field.FIELD_STEPS)?.asInt()
+                                ?: 0
+                        findViewById<TextView>(R.id.tv_stepsTaken).text = totalSteps.toString()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.i("Connection", "There was a problem getting steps.", e)
+                        Toast.makeText(this, "Can't Load Steps", Toast.LENGTH_LONG).show()
+                    }
                 Toast.makeText(
                     applicationContext,
                     "Field: " + field.name + " Value: " + value,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            t = value.toString()
         }
-            findViewById<TextView>(R.id.tv_stepsTaken).text = t
     }
 
     override fun onStop() {
@@ -107,7 +130,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         val request: SensorRequest = SensorRequest.Builder()
             .setDataSource(dataSource!!)
             .setDataType(dataType)
-            .setSamplingRate(5, TimeUnit.SECONDS)
+            .setSamplingRate(1, TimeUnit.SECONDS)
             .build()
 
         Fitness.SensorsApi.add(mApiClient, request, this)
@@ -119,6 +142,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     override fun onConnected(p0: Bundle?) {
+        recordingData()
         Log.i("Connection", "onConnected")
         val dataSourceRequest = DataSourcesRequest.Builder()
             .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)
@@ -147,7 +171,6 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
 
         Fitness.SensorsApi.findDataSources(mApiClient, dataSourceRequest)
             .setResultCallback(dataSourcesResultCallback)
-        recordingData()
     }
 
 
@@ -161,7 +184,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
-        Toast.makeText(this,"Connection Failed", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Connection Failed", Toast.LENGTH_LONG).show()
         if (!authInProgress) {
             try {
                 authInProgress = true

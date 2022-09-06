@@ -119,6 +119,7 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     fun retrievingData() {
+
         val readReq: DataReadRequest = DataReadRequest.Builder()
             .aggregate(
                 DataType.TYPE_STEP_COUNT_DELTA,
@@ -143,6 +144,7 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
                 }
             }
         )
+
     }
 
     private fun processData(dataSet: DataSet) {
@@ -151,7 +153,7 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
             val dpStart = dp.getStartTime(TimeUnit.NANOSECONDS) / 1000000 + 100000
             val simpleDateFormat = SimpleDateFormat("EEEE")
 
-            Log.i("Time", simpleDateFormat.format(startTime) + " " + simpleDateFormat.format(endTIme))
+            Log.i("Times", simpleDateFormat.format(startTime) + " " + simpleDateFormat.format(endTIme))
             for (field in dp.dataType.fields) {
                 items.add(0,
                     (simpleDateFormat.format(dpStart
