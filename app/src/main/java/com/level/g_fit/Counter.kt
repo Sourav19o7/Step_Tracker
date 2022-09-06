@@ -142,7 +142,7 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     }
 
     override fun onConnected(p0: Bundle?) {
-        recordingData()
+        //recordingData()
         //Fitness.RecordingApi.subscribe(mApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
         val rec : Recording_Subscribe = Recording_Subscribe()
         rec.start(mApiClient)
@@ -178,8 +178,9 @@ class Counter : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
 
 
     private fun recordingData() {
-        var pendingResult: PendingResult<Status> = Fitness.RecordingApi
+        Fitness.RecordingApi
             .subscribe(mApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
+        Fitness.RecordingApi.subscribe(mApiClient,DataType.AGGREGATE_STEP_COUNT_DELTA)
     }
 
     override fun onConnectionSuspended(p0: Int) {
