@@ -5,25 +5,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 
-class History_Adapter: RecyclerView.Adapter<historyViewHolder>() {
+class History_Adapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val items: ArrayList<String> = ArrayList()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): historyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
-        return historyViewHolder(view)
+        return HistoryViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: historyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val currentItem = items[position]
-        holder.titleView.text = currentItem
+        holder.steps.text = currentItem
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    fun updateSteps(updatedSteps: ArrayList<String>)
-    {
+    fun updateSteps(updatedSteps: ArrayList<String>) {
         items.clear()
         items.addAll(updatedSteps)
 
@@ -31,6 +31,7 @@ class History_Adapter: RecyclerView.Adapter<historyViewHolder>() {
     }
 }
 
-class historyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-    val titleView: TextView = itemView.findViewById(R.id.steps)
+class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val steps: TextView = itemView.findViewById(R.id.steps)
+    val day: TextView = itemView.findViewById(R.id.day)
 }

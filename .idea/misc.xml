@@ -5,9 +5,11 @@
       <map>
         <entry key="..\:/G_Fit/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.121" />
         <entry key="..\:/G_Fit/app/src/main/res/drawable/circle.xml" value="0.21" />
+        <entry key="..\:/G_Fit/app/src/main/res/drawable/gradient_background.xml" value="0.121" />
+        <entry key="..\:/G_Fit/app/src/main/res/drawable/gradient_background_reverse.xml" value="0.119" />
         <entry key="..\:/G_Fit/app/src/main/res/drawable/ic_launcher_background.xml" value="0.121" />
         <entry key="..\:/G_Fit/app/src/main/res/drawable/rectangle.xml" value="0.223" />
-        <entry key="..\:/G_Fit/app/src/main/res/layout/activity_archive.xml" value="0.10989583333333333" />
+        <entry key="..\:/G_Fit/app/src/main/res/layout/activity_archive.xml" value="0.264" />
         <entry key="..\:/G_Fit/app/src/main/res/layout/activity_counter.xml" value="0.25" />
         <entry key="..\:/G_Fit/app/src/main/res/layout/activity_dummy.xml" value="0.25" />
         <entry key="..\:/G_Fit/app/src/main/res/layout/activity_history.xml" value="0.264" />

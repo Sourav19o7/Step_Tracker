@@ -16,10 +16,10 @@ import com.level.g_fit.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
-    val FINE_LOCATION = 101
-    val ACTIVITY_RECO = 102
+    private val FINE_LOCATION = 101
+    private val ACTIVITY_RECO = 102
 
-    var str_permissions = arrayOf<String>(
+    var str_permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACTIVITY_RECOGNITION
     )
@@ -114,6 +114,5 @@ class MainActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
-
 }
 

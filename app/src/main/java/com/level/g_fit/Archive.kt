@@ -9,12 +9,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.charts.BarChart
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.PendingResult
-import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.data.*
+import com.google.android.gms.fitness.data.DataPoint
+import com.google.android.gms.fitness.data.DataSet
+import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.result.DataReadResult
@@ -24,44 +26,35 @@ import java.util.concurrent.TimeUnit
 
 class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener {
-    var WEEK_IN_MS = 1000 * 60 * 60 * 24 * 7
+
+    private var WEEK_IN_MS = 1000 * 60 * 60 * 24 * 7
     var now: Date = Date()
     var endTIme = now.time
     var startTime = endTIme - (WEEK_IN_MS)
+
     val REQUEST_OAUTH = 1
     val AUTH_PENDING: String = ""
     var authInProgress: Boolean = false
-    var items = ArrayList<String>()
-    lateinit var mApiClient: GoogleApiClient
 
-    val mAdapter: History_Adapter = History_Adapter()
+    var items = ArrayList<String>()
+    private lateinit var mApiClient: GoogleApiClient
+    private val mAdapter: History_Adapter = History_Adapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_archive)
 
-        Log.i("Time", startTime.toString() +  " " +endTIme.toString())
 
-        var rightNow : Calendar = Calendar.getInstance()
-        var offset: Long = (rightNow.get(Calendar.ZONE_OFFSET) +
-                rightNow.get(Calendar.DST_OFFSET)).toLong()
-
-        var sinceMidnight: Long = (rightNow.getTimeInMillis() + offset) %
-                (24 * 60 * 60 * 1000)
-
-        startTime -= sinceMidnight
-
+        setTime()
         fetchData()
+
         val recyclerView = findViewById<RecyclerView>(R.id.recycclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = mAdapter
 
-        Log.i("Connection", "Started")
         if (savedInstanceState != null) {
-            Log.i("Connection", "savedInstance not null")
             authInProgress = savedInstanceState.getBoolean(AUTH_PENDING)
         }
-
 
         mApiClient = GoogleApiClient.Builder(this)
             .addApi(Fitness.RECORDING_API)
@@ -70,16 +63,26 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
             .build()
-
     }
 
-    private fun fetchData(){
+
+    private fun setTime() {
+        val rightNow: Calendar = Calendar.getInstance()
+        val offset: Long = (rightNow.get(Calendar.ZONE_OFFSET) +
+                rightNow.get(Calendar.DST_OFFSET)).toLong()
+
+        val sinceMidnight: Long = (rightNow.getTimeInMillis() + offset) %
+                (24 * 60 * 60 * 1000)
+
+        startTime += (24 * 60 * 60 * 1000 - sinceMidnight)
+    }
+
+    private fun fetchData() {
         val list = ArrayList<String>()
         list.add("Date : Steps")
 
         mAdapter.updateSteps(list)
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -95,11 +98,9 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        Log.i("Connection", "onActiityResult")
         if (requestCode == REQUEST_OAUTH) {
             authInProgress = false
             if (resultCode == RESULT_OK) {
-                Log.i("Connection", "Result code ok")
                 if (!mApiClient.isConnecting && !mApiClient.isConnected) {
                     mApiClient.connect()
                 }
@@ -111,14 +112,11 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         }
     }
 
-
     override fun onConnected(p0: Bundle?) {
-        Log.i("Connection", "onConnected")
         retrievingData()
-
     }
 
-    fun retrievingData() {
+    private fun retrievingData() {
         val readReq: DataReadRequest = DataReadRequest.Builder()
             .aggregate(
                 DataType.TYPE_STEP_COUNT_DELTA,
@@ -131,42 +129,37 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         val pendingResult: PendingResult<DataReadResult> =
             Fitness.HistoryApi.readData(mApiClient, readReq)
 
-        pendingResult.setResultCallback(
-            ResultCallback<DataReadResult> {
-                if (it.buckets.size > 0) {
-                    for (bucket in it.buckets) {
-                        val dataSets: List<DataSet> = bucket.dataSets
-                        for (dataSet in dataSets) {
-                            processData(dataSet)
-                        }
+        pendingResult.setResultCallback {
+            if (it.buckets.size > 0) {
+                for (bucket in it.buckets) {
+                    val dataSets: List<DataSet> = bucket.dataSets
+                    for (dataSet in dataSets) {
+                        processData(dataSet)
                     }
                 }
             }
-        )
+        }
     }
 
     private fun processData(dataSet: DataSet) {
-
         for (dp in dataSet.dataPoints) {
             val dpStart = dp.getStartTime(TimeUnit.NANOSECONDS) / 1000000 + 100000
             val simpleDateFormat = SimpleDateFormat("EEEE")
 
-            Log.i("Times", simpleDateFormat.format(startTime) + " " + simpleDateFormat.format(endTIme))
             for (field in dp.dataType.fields) {
-                items.add(0,
-                    (simpleDateFormat.format(dpStart
+                items.add(
+                    0,
+                    (simpleDateFormat.format(
+                        dpStart
                     ) + " : " + dp.getValue(field)).toString()
                 )
             }
         }
-        if(items != null)
-        {
-            mAdapter.updateSteps(items)
-        }
+        mAdapter.updateSteps(items)
     }
 
     override fun onConnectionSuspended(p0: Int) {
-        TODO("Not yet implemented")
+        Log.i("Connection", "Connection Suspended")
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {

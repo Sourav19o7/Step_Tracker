@@ -12,7 +12,7 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.result.ListSubscriptionsResult
 
 
-class Recording_Subscribe() {
+class Recording_Subscribe {
     var mSubscribeResultCallback: ResultCallback<Status>? = null
     var mCancelSubscriptionResultCallback: ResultCallback<Status>? = null
     var mListSubscriptionsResultCallback: ResultCallback<ListSubscriptionsResult>? = null
@@ -39,7 +39,6 @@ class Recording_Subscribe() {
                 if (status.isSuccess) {
                     Log.i("RecordingAPI", "Canceled subscriptions!")
                 } else {
-                    // Subscription not removed
                     Log.i("RecordingAPI", "Failed to cancel subscriptions")
                 }
             }
