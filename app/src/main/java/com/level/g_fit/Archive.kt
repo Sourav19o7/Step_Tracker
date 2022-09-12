@@ -23,6 +23,7 @@ import com.google.android.gms.fitness.result.DataReadResult
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener {
@@ -154,7 +155,6 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
                         processData(dataSet)
                     }
                 }
-                mAdapter.updateSteps(items)
             }
         }
     }
@@ -163,18 +163,23 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         for (dp in dataSet.dataPoints) {
             val dpStart = dp.getStartTime(TimeUnit.NANOSECONDS) / 1000000 + 100000
             val simpleDateFormat = SimpleDateFormat("EEEE")
-
             for (field in dp.dataType.fields) {
                 Log.i(
                     "DATAS", dp.dataType.fields.size.toString() + " " + simpleDateFormat.format(
                         dpStart
                     ) + " $field = " + dp.getValue(field) + "\n"
                 )
-                items.add(dp.getValue(field).toString()
-                )
+                    items.add(
+                        0,
+                        simpleDateFormat.format(
+                            dpStart
+                        ).toString() + " : " +
+                                field.name + " : " + dp.getValue(field).toString()
+                    )
             }
 
         }
+        mAdapter.updateSteps(items)
     }
 
     override fun onConnectionSuspended(p0: Int) {

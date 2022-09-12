@@ -26,6 +26,7 @@ class Recording_Subscribe {
             .setResultCallback(mSubscribeResultCallback!!)
         Fitness.RecordingApi.subscribe(mApiClient, DataType.TYPE_DISTANCE_DELTA)
             .setResultCallback(mSubscribeResultCallback!!)
+
     }
     fun initCallbacks() {
         mSubscribeResultCallback =

@@ -25,7 +25,6 @@ class History_Adapter : RecyclerView.Adapter<HistoryViewHolder>() {
 
     fun updateSteps(updatedSteps: ArrayList<String>) {
         items.clear()
-
         items.addAll(updatedSteps)
 
         notifyDataSetChanged()
