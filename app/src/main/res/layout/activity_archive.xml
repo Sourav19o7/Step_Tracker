@@ -26,13 +26,6 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <!--Ui component for our bar chart-->
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/idBarChart"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_below="@id/idTVHead" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="10dp"
         android:id="@+id/recycclerView"

@@ -25,6 +25,7 @@ class History_Adapter : RecyclerView.Adapter<HistoryViewHolder>() {
 
     fun updateSteps(updatedSteps: ArrayList<String>) {
         items.clear()
+
         items.addAll(updatedSteps)
 
         notifyDataSetChanged()
@@ -33,5 +34,4 @@ class History_Adapter : RecyclerView.Adapter<HistoryViewHolder>() {
 
 class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val steps: TextView = itemView.findViewById(R.id.steps)
-    val day: TextView = itemView.findViewById(R.id.day)
 }

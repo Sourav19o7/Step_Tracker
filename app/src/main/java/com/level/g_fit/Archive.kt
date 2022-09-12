@@ -57,9 +57,12 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
         }
 
         mApiClient = GoogleApiClient.Builder(this)
+            .addApi(Fitness.SENSORS_API)
             .addApi(Fitness.RECORDING_API)
             .addApi(Fitness.HISTORY_API)
+            .addScope(Fitness.SCOPE_LOCATION_READ)
             .addScope(Fitness.SCOPE_ACTIVITY_READ_WRITE)
+            .addScope(Fitness.SCOPE_BODY_READ)
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
             .build()
@@ -122,6 +125,20 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
                 DataType.TYPE_STEP_COUNT_DELTA,
                 DataType.AGGREGATE_STEP_COUNT_DELTA
             )
+            .aggregate(
+                DataType.TYPE_DISTANCE_DELTA,
+                DataType.AGGREGATE_DISTANCE_DELTA
+            )
+            .aggregate(DataType.TYPE_MOVE_MINUTES)
+            .aggregate(
+                DataType.TYPE_CALORIES_EXPENDED,
+                DataType.AGGREGATE_CALORIES_EXPENDED
+            )
+            .aggregate(
+                DataType.TYPE_SPEED,
+                DataType.AGGREGATE_SPEED_SUMMARY
+            )
+            .aggregate(DataType.TYPE_HEART_POINTS, DataType.AGGREGATE_HEART_POINTS)
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTIme, TimeUnit.MILLISECONDS)
             .build()
@@ -137,6 +154,7 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
                         processData(dataSet)
                     }
                 }
+                mAdapter.updateSteps(items)
             }
         }
     }
@@ -147,15 +165,16 @@ class Archive : AppCompatActivity(), OnDataPointListener, GoogleApiClient.Connec
             val simpleDateFormat = SimpleDateFormat("EEEE")
 
             for (field in dp.dataType.fields) {
-                items.add(
-                    0,
-                    (simpleDateFormat.format(
+                Log.i(
+                    "DATAS", dp.dataType.fields.size.toString() + " " + simpleDateFormat.format(
                         dpStart
-                    ) + " : " + dp.getValue(field)).toString()
+                    ) + " $field = " + dp.getValue(field) + "\n"
+                )
+                items.add(dp.getValue(field).toString()
                 )
             }
+
         }
-        mAdapter.updateSteps(items)
     }
 
     override fun onConnectionSuspended(p0: Int) {
